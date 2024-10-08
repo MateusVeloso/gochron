@@ -41,4 +41,4 @@ To contribute or test the library locally:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/gochron.git
+   git clone https://github.com/mateusveloso/gochron.git
