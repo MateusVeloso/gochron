@@ -10,7 +10,6 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Branches and Versioning](#branches-and-versioning)
 
 ## Features
 
