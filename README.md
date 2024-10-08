@@ -10,10 +10,7 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Development](#development)
 - [Branches and Versioning](#branches-and-versioning)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
@@ -34,11 +31,3 @@ Currently, the library is not available for installation via `go get` as it is u
 ## Usage
 
 To be updated once the library is ready for use. Example usage and code snippets will be included here in future versions.
-
-## Development
-
-To contribute or test the library locally:
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/mateusveloso/gochron.git
