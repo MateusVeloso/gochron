@@ -1,83 +1,66 @@
 package time
 
 import (
-	"fmt"
-	"sync"
 	"testing"
 )
 
-// Test NewFromUTC function without offset (defaults to NewFromUTC+0)
-func TestUTC_NoOffset(t *testing.T) {
-	tm, err := NewFromUTC()
-	if err != nil {
-		t.Fatalf("Error calling NewFromUTC(): %v", err)
-	}
-	if tm.Location().String() != "NewFromUTC+0" {
-		t.Errorf("Expected location 'NewFromUTC+0', but got '%s'", tm.Location().String())
+func TestNewTime(t *testing.T) {
+	time := NewTime(14, 30, 45)
+	if time.GetHour() != 14 || time.GetMinute() != 30 || time.GetSecond() != 45 {
+		t.Errorf("Time is incorrect: got %02d:%02d:%02d, want 14:30:45", time.GetHour(), time.GetMinute(), time.GetSecond())
 	}
 }
 
-// Test NewFromUTC function with a valid offset
-func TestUTC_WithValidOffset(t *testing.T) {
-	offset := -3
-	tm, err := NewFromUTC(offset)
-	if err != nil {
-		t.Fatalf("Error calling NewFromUTC(%d): %v", offset, err)
+func TestAddSeconds(t *testing.T) {
+	time := NewTime(14, 59, 50)
+	time.AddSeconds(15)
+	if time.GetHour() != 15 || time.GetMinute() != 0 || time.GetSecond() != 5 {
+		t.Errorf("Time after adding seconds is incorrect: got %02d:%02d:%02d, want 15:00:05", time.GetHour(), time.GetMinute(), time.GetSecond())
 	}
-	expectedLoc := "NewFromUTC-3"
-	if tm.Location().String() != expectedLoc {
-		t.Errorf("Expected location '%s', but got '%s'", expectedLoc, tm.Location().String())
+
+	time = NewTime(23, 59, 50)
+	time.AddSeconds(20)
+	if time.GetHour() != 0 || time.GetMinute() != 0 || time.GetSecond() != 10 {
+		t.Errorf("Time after adding seconds is incorrect: got %02d:%02d:%02d, want 00:00:10", time.GetHour(), time.GetMinute(), time.GetSecond())
 	}
 }
 
-// Test NewFromUTC function with an invalid offset (below minimum)
-func TestUTC_WithInvalidOffsetLow(t *testing.T) {
-	offset := -13
-	_, err := NewFromUTC(offset)
-	if err == nil {
-		t.Fatalf("Expected error when calling NewFromUTC(%d), but got none", offset)
+func TestSubtractSeconds(t *testing.T) {
+	time := NewTime(0, 0, 10)
+	time.SubtractSeconds(15)
+	if time.GetHour() != 23 || time.GetMinute() != 59 || time.GetSecond() != 55 {
+		t.Errorf("Time after subtracting seconds is incorrect: got %02d:%02d:%02d, want 23:59:55", time.GetHour(), time.GetMinute(), time.GetSecond())
+	}
+
+	time = NewTime(1, 0, 0)
+	time.SubtractSeconds(3600)
+	if time.GetHour() != 0 || time.GetMinute() != 0 || time.GetSecond() != 0 {
+		t.Errorf("Time after subtracting seconds is incorrect: got %02d:%02d:%02d, want 00:00:00", time.GetHour(), time.GetMinute(), time.GetSecond())
 	}
 }
 
-// Test NewFromUTC function with an invalid offset (above maximum)
-func TestUTC_WithInvalidOffsetHigh(t *testing.T) {
-	offset := 15
-	_, err := NewFromUTC(offset)
-	if err == nil {
-		t.Fatalf("Expected error when calling NewFromUTC(%d), but got none", offset)
+func TestCompareTimes(t *testing.T) {
+	time1 := NewTime(14, 30, 45)
+	time2 := NewTime(15, 0, 0)
+
+	if time1.Compare(*time2) != -1 {
+		t.Error("Expected time1 to be earlier than time2")
+	}
+
+	if time2.Compare(*time1) != 1 {
+		t.Error("Expected time2 to be later than time1")
+	}
+
+	time3 := NewTime(14, 30, 45)
+	if time1.Compare(*time3) != 0 {
+		t.Error("Expected time1 to be equal to time3")
 	}
 }
 
-// Concurrent test for NewFromUTC function with multiple offsets
-func TestUTC_Concurrent(t *testing.T) {
-	offsets := []int{-12, -6, 0, 6, 14}
-	var wg sync.WaitGroup
-	for _, offset := range offsets {
-		wg.Add(1)
-		go func(offset int) {
-			defer wg.Done()
-			for i := 0; i < 1000; i++ {
-				tm, err := NewFromUTC(offset)
-				if err != nil {
-					t.Errorf("Error calling NewFromUTC(%d): %v", offset, err)
-					return
-				}
-				expectedLoc := fmt.Sprintf("NewFromUTC%+d", offset)
-				if tm.Location().String() != expectedLoc {
-					t.Errorf("Expected location '%s', but got '%s'", expectedLoc, tm.Location().String())
-				}
-			}
-		}(offset)
-	}
-	wg.Wait()
-}
-
-// Test to verify if the cache is working correctly
-func TestUTC_Cache(t *testing.T) {
-	offset := -3
-	loc1 := getCachedLocation(offset)
-	loc2 := getCachedLocation(offset)
-	if loc1 != loc2 {
-		t.Errorf("Cache failed: locations should be the same")
+func TestTimeFormat(t *testing.T) {
+	time := NewTime(5, 7, 9)
+	formatted := time.Format("{hh}:{min}:{ss}")
+	if formatted != "05:07:09" {
+		t.Errorf("Formatted time is incorrect: got %s, want 05:07:09", formatted)
 	}
 }

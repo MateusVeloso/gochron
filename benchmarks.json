@@ -1,0 +1,130 @@
+{
+  "goos": "darwin",
+  "goarch": "arm64",
+  "cpu": "Apple M2",
+  "packages": [
+    {
+      "pkg": "github.com/mateusveloso/gochron/date",
+      "benchmarks": [
+        {
+          "name": "BenchmarkNewDate",
+          "iterations": 80098539,
+          "ns_per_op": 14.74,
+          "bytes_per_op": 24,
+          "allocs_per_op": 1
+        },
+        {
+          "name": "BenchmarkAddDays",
+          "iterations": 1000000000,
+          "ns_per_op": 1.138,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkSubtractDays",
+          "iterations": 532028876,
+          "ns_per_op": 1.953,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkCompareDates",
+          "iterations": 1000000000,
+          "ns_per_op": 0.3133,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkDateFormat",
+          "iterations": 4340995,
+          "ns_per_op": 277.5,
+          "bytes_per_op": 64,
+          "allocs_per_op": 7
+        }
+      ],
+      "duration": "6.473s"
+    },
+    {
+      "pkg": "github.com/mateusveloso/gochron/datetime",
+      "benchmarks": [
+        {
+          "name": "BenchmarkNewDateTime",
+          "iterations": 39315097,
+          "ns_per_op": 30.05,
+          "bytes_per_op": 72,
+          "allocs_per_op": 2
+        },
+        {
+          "name": "BenchmarkAddDuration",
+          "iterations": 228600946,
+          "ns_per_op": 5.241,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkSubtractDuration",
+          "iterations": 17733771,
+          "ns_per_op": 67.96,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkCompareDateTimes",
+          "iterations": 304432118,
+          "ns_per_op": 3.949,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkDateTimeFormat",
+          "iterations": 1738405,
+          "ns_per_op": 689.9,
+          "bytes_per_op": 192,
+          "allocs_per_op": 13
+        }
+      ],
+      "duration": "7.900s"
+    },
+    {
+      "pkg": "github.com/mateusveloso/gochron/time",
+      "benchmarks": [
+        {
+          "name": "BenchmarkNewTime",
+          "iterations": 1000000000,
+          "ns_per_op": 0.2932,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkAddSeconds",
+          "iterations": 233562567,
+          "ns_per_op": 5.133,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkSubtractSeconds",
+          "iterations": 979624152,
+          "ns_per_op": 1.234,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkCompareTimes",
+          "iterations": 1000000000,
+          "ns_per_op": 0.2892,
+          "bytes_per_op": 0,
+          "allocs_per_op": 0
+        },
+        {
+          "name": "BenchmarkTimeFormat",
+          "iterations": 4498530,
+          "ns_per_op": 265.0,
+          "bytes_per_op": 48,
+          "allocs_per_op": 6
+        }
+      ],
+      "duration": "5.375s"
+    }
+  ]
+}

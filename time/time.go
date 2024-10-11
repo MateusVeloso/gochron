@@ -1,75 +1,86 @@
 package time
 
-import (
-	"fmt"
-	"sync"
-	"time"
-)
-
-// Time represents a moment in time with an associated time zone.
+// Time structure to represent hours, minutes, and seconds.
+// This structure represents a specific time of day with hour, minute, and second fields.
+// Fields are private to ensure consistent data manipulation through defined methods.
 type Time struct {
-	time     *time.Time     // The time value
-	location *time.Location // The associated time zone
+	hour   int
+	minute int
+	second int
 }
 
-var (
-	// locationCache stores time zones based on their UTC offset.
-	locationCache = make(map[int]*time.Location)
-	// cacheMutex protects access to locationCache for concurrent use.
-	cacheMutex sync.RWMutex
-)
+// NewTime Function to create a new instance of Time
+// Initializes a new Time instance with given hour, minute, and second values.
+func NewTime(hour, minute, second int) *Time {
+	return &Time{hour: hour, minute: minute, second: second}
+}
 
-// NewFromUTC returns a Time instance with the specified NewFromUTC offset.
-// If no offset is provided, it defaults to NewFromUTC+0.
-func NewFromUTC(offsets ...int) (Time, error) {
-	offset := 0
-	if len(offsets) > 0 {
-		offset = offsets[0]
-		// Validate the offset
-		if offset < -12 || offset > 14 {
-			return Time{}, fmt.Errorf("invalid offset: %d. Offset must be between -12 and +14", offset)
+// AddSeconds Method to add seconds to the Time structure
+// Manages overflow from seconds to minutes, and minutes to hours.
+func (t *Time) AddSeconds(seconds int) {
+	t.second += seconds
+
+	t.minute += t.second / 60
+	t.second = t.second % 60
+
+	t.hour += t.minute / 60
+	t.minute = t.minute % 60
+
+	t.hour = t.hour % 24
+}
+
+// SubtractSeconds Method to subtract seconds from the Time structure
+// Handles underflow and adjusts minutes and hours accordingly.
+func (t *Time) SubtractSeconds(seconds int) {
+	t.second -= seconds
+	for t.second < 0 {
+		t.second += 60
+		t.minute--
+	}
+	for t.minute < 0 {
+		t.minute += 60
+		t.hour--
+	}
+	for t.hour < 0 {
+		t.hour += 24
+	}
+}
+
+// Compare Method to compare two Time structures
+// Returns 1 if the current time is greater, -1 if smaller, and 0 if equal.
+func (t Time) Compare(other Time) int {
+	if t.hour != other.hour {
+		if t.hour > other.hour {
+			return 1
 		}
+		return -1
 	}
-
-	loc := getCachedLocation(offset)
-	now := time.Now().In(loc)
-	return Time{
-		time:     &now,
-		location: loc,
-	}, nil
-}
-
-// getCachedLocation returns a *time.Location from the cache or creates a new one if it doesn't exist.
-func getCachedLocation(offset int) *time.Location {
-	cacheMutex.RLock()
-	loc, ok := locationCache[offset]
-	cacheMutex.RUnlock()
-	if ok {
-		return loc
+	if t.minute != other.minute {
+		if t.minute > other.minute {
+			return 1
+		}
+		return -1
 	}
-
-	// Not in cache, create new location
-	locName := fmt.Sprintf("NewFromUTC%+d", offset)
-	loc = time.FixedZone(locName, offset*3600)
-
-	// Store in cache
-	cacheMutex.Lock()
-	locationCache[offset] = loc
-	cacheMutex.Unlock()
-
-	return loc
+	if t.second != other.second {
+		if t.second > other.second {
+			return 1
+		}
+		return -1
+	}
+	return 0
 }
 
-// Time returns the time.Time instance of the Time struct.
-func (t *Time) Time() time.Time {
-	return *t.time
+// GetHour Method to get the hour of the Time structure
+func (t Time) GetHour() int {
+	return t.hour
 }
 
-// Location returns the time.Location instance of the Time struct.
-func (t *Time) Location() *time.Location {
-	return t.location
+// GetMinute Method to get the minute of the Time structure
+func (t Time) GetMinute() int {
+	return t.minute
 }
 
-func (t *Time) String() string {
-	return t.time.String()
+// GetSecond Method to get the second of the Time structure
+func (t Time) GetSecond() int {
+	return t.second
 }
